@@ -151,6 +151,9 @@ app.post('/api/nuevoUser.php', async function (req, res) { //cuando se accede a 
 
 })
 
+/**
+ * Obtener el rol y el usuario de la request para poder modificar el rol de dicho usuario
+ */
 app.post('/api/modificarUsuario.php', async function (req, res) {
 
     const usuario = req.body.usuario
@@ -185,6 +188,46 @@ app.post('/api/modificarUsuario.php', async function (req, res) {
         res.status(500).send({ error: e.message })
     }
 })
+
+/**
+ * Obtener el usuario para eliminarlo de la base de datos
+ */
+ app.post('/api/borrarUsuario.php', async function (req, res) {
+
+    const usuario = req.body.usuario
+    try {
+        //Devuelve una respuesta asíncrona
+        return await axios({
+            method: 'POST',
+            url: 'https://vicarverse-php-api.herokuapp.com/borrarUsuario.php',
+            data: {
+                usuario: usuario
+            },
+            headers: {
+                'Content-type': 'application/json'
+            }
+        })
+            //Si se recibe respuesta desde la API...
+            .then((response) => {
+                const { data } = response
+                if (data) {
+
+                    console.log(data)
+                    res.send(data)
+                } else {    //Si no se recibe la respuesta
+                    res.send(console.log('no hay respuesta'))
+                }
+            })
+
+    } catch (e) {
+        console.log(e.stack)
+        res.status(500).send({ error: e.message })
+    }
+})
+
+
+
+
 
 //Servidor iniciado
 app.listen(app.get('port'), () => {
